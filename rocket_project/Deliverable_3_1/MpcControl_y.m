@@ -1,4 +1,4 @@
-classdef MpcControl_x < MpcControlBase
+classdef MpcControl_y < MpcControlBase
     
     methods
         % Design a YALMIP optimizer object that takes a steady-state state
@@ -28,22 +28,20 @@ classdef MpcControl_x < MpcControlBase
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
-              % NOTE: The matrices mpc.A, mpc.B, mpc.C and mpc.D are
+            
+            % NOTE: The matrices mpc.A, mpc.B, mpc.C and mpc.D are
             %       the DISCRETE-TIME MODEL of your system
-
-
             % System Dynamics
             A = mpc.A;
             B = mpc.B;
 
             % Cost matrices
-            Q = [2 0 0 0;
+            Q = [3 0 0 0;
                 0 3 0 0;
                 0 0 0.2 0;
-                0 0 0 0.1];
+                0 0 0 0.2];
 
             R = 25;
-
 
             % Constraints
             % u in U = { u | Mu <= m }
@@ -52,7 +50,7 @@ classdef MpcControl_x < MpcControlBase
             % x in X = { x | Fx <= f }
             F = [0 1 0 0; 0 0 0 0;0 -1 0 0; 0 0 0 0]; 
             f = [deg2rad(10); 0; deg2rad(10); 0];
-            
+
             % Compute LQR controller for unconstrained system
             [K,Qf,~] = dlqr(A,B,Q,R);
 
@@ -87,15 +85,12 @@ classdef MpcControl_x < MpcControlBase
             % Third subplot
             subplot(1, 3, 3); 
             Xf.projection(3:4).plot();
-            
-            
 
 
-            
             % SET THE PROBLEM CONSTRAINTS con AND THE OBJECTIVE obj HERE
             obj = 0;
             con = [];
-            
+
             for i = 1:N-1
                 con = con + (X(:,i+1) == A*X(:,i) + B*U(:,i));
                 con = con + (F*X(:,i) <= f) + (M*U(:,i) <= m);
@@ -103,6 +98,7 @@ classdef MpcControl_x < MpcControlBase
             end
             con = con + (Ff*X(:,N) <= ff);
             obj = obj + X(:,N)'*Qf*X(:,N);
+            
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             

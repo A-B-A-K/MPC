@@ -1,4 +1,4 @@
-classdef MpcControl_x < MpcControlBase
+classdef MpcControl_roll < MpcControlBase
     
     methods
         % Design a YALMIP optimizer object that takes a steady-state state
@@ -11,14 +11,14 @@ classdef MpcControl_x < MpcControlBase
             %   x_ref, u_ref - reference state/input
             % OUTPUTS
             %   U(:,1)       - input to apply to the system
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
             N_segs = ceil(H/Ts); % Horizon steps
             N = N_segs + 1;      % Last index in 1-based Matlab indexing
-
+            
             [nx, nu] = size(mpc.B);
             
-            % Targets (Ignore this before Todo 3.2)
+            % Steady-state targets (Ignore this before Todo 3.2)
             x_ref = sdpvar(nx, 1);
             u_ref = sdpvar(nu, 1);
             
@@ -28,30 +28,29 @@ classdef MpcControl_x < MpcControlBase
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
-              % NOTE: The matrices mpc.A, mpc.B, mpc.C and mpc.D are
+            
+            % NOTE: The matrices mpc.A, mpc.B, mpc.C and mpc.D are
             %       the DISCRETE-TIME MODEL of your system
 
-
-            % System Dynamics
             A = mpc.A;
             B = mpc.B;
 
             % Cost matrices
-            Q = [2 0 0 0;
-                0 3 0 0;
-                0 0 0.2 0;
-                0 0 0 0.1];
+            Q = [40 0;
+                0 40];
 
-            R = 25;
-
+            R = 1;
 
             % Constraints
-            % u in U = { u | Mu <= m }
+            % u in U = { u | Mu <= m } (i.e. Pdiff<=0.2, -Pdiff<=0.2)
             M = [1;-1]; 
-            m = [deg2rad(15); deg2rad(15)];
-            % x in X = { x | Fx <= f }
-            F = [0 1 0 0; 0 0 0 0;0 -1 0 0; 0 0 0 0]; 
-            f = [deg2rad(10); 0; deg2rad(10); 0];
+            m = [20; 20];
+            % x in X = { x | Fx <= f } --> no state constraints here
+            F = [1 0;
+                -1 0;
+                0 1;
+                0 -1];
+            f = [inf; inf; inf; inf];
             
             % Compute LQR controller for unconstrained system
             [K,Qf,~] = dlqr(A,B,Q,R);
@@ -75,27 +74,13 @@ classdef MpcControl_x < MpcControlBase
 
             % Plot sets
             figure;
-
-            % First subplot
-            subplot(1, 3, 1); 
             Xf.projection(1:2).plot();
             
-            % Second subplot
-            subplot(1, 3, 2); 
-            Xf.projection(2:3).plot();
-            
-            % Third subplot
-            subplot(1, 3, 3); 
-            Xf.projection(3:4).plot();
-            
-            
 
-
-            
             % SET THE PROBLEM CONSTRAINTS con AND THE OBJECTIVE obj HERE
             obj = 0;
             con = [];
-            
+
             for i = 1:N-1
                 con = con + (X(:,i+1) == A*X(:,i) + B*U(:,i));
                 con = con + (F*X(:,i) <= f) + (M*U(:,i) <= m);
@@ -103,6 +88,7 @@ classdef MpcControl_x < MpcControlBase
             end
             con = con + (Ff*X(:,N) <= ff);
             obj = obj + X(:,N)'*Qf*X(:,N);
+            
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
@@ -122,9 +108,8 @@ classdef MpcControl_x < MpcControlBase
             %   xs, us - steady-state target
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
-            nx = size(mpc.A, 1);
-
             % Steady-state targets
+            nx = size(mpc.A, 1);
             xs = sdpvar(nx, 1);
             us = sdpvar;
             
