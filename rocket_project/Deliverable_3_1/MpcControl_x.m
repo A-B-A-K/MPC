@@ -37,13 +37,12 @@ classdef MpcControl_x < MpcControlBase
             B = mpc.B;
 
             % Cost matrices
-            Q = [2 0 0 0;
-                0 3 0 0;
-                0 0 0.2 0;
+            Q = [5 0 0 0;
+                0 0 0 0;
+                0 0 0.1 0;
                 0 0 0 0.1];
 
-            R = 25;
-
+            R = 1;
 
             % Constraints
             % u in U = { u | Mu <= m }
@@ -88,10 +87,7 @@ classdef MpcControl_x < MpcControlBase
             subplot(1, 3, 3); 
             Xf.projection(3:4).plot();
             
-            
-
-
-            
+                
             % SET THE PROBLEM CONSTRAINTS con AND THE OBJECTIVE obj HERE
             obj = 0;
             con = [];

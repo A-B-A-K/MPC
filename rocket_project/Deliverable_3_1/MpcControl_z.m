@@ -51,8 +51,9 @@ classdef MpcControl_z < MpcControlBase
             % Cost matrices
             Q = [250 0;
                 0 250];
-
+            
             R = 40;
+
 
             % Constraints
             % u in U = { u | Mu <= m } (i.e. Pavg<=80%, -Pavg<=20%)

@@ -36,8 +36,8 @@ classdef MpcControl_roll < MpcControlBase
             B = mpc.B;
 
             % Cost matrices
-            Q = [40 0;
-                0 40];
+            Q = [100 0;
+                0 70];
 
             R = 1;
 
