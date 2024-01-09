@@ -32,11 +32,12 @@ ref = [1.2, 0, 3, 0]';
 rocket.mass = 2.13;
 
 % Using state estimates of observer
-% [T, X, U, Ref, Z_hat] = rocket.simulate_est_z(x0, Tf, @mpc.get_u, ref, mpc_z, sysz);
-% rocket.anim_rate = 5;
-% ph = rocket.plotvis(T, X, U, Ref);
-% % 
-% % Not using state estimates from observer
+[T, X, U, Ref, Z_hat] = rocket.simulate_est_z(x0, Tf, @mpc.get_u, ref, mpc_z, sysz);
+rocket.anim_rate = 5;
+ph = rocket.plotvis(T, X, U, Ref);
+
+
+% Not using state estimates from observer
 rocket.mass = 2.13;
 [T, X, U, Ref] = rocket.simulate(x0, Tf, @mpc.get_u, ref);
 rocket.anim_rate = 5;

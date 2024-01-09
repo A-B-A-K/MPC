@@ -50,15 +50,15 @@ classdef MpcControl_z < MpcControlBase
 
             % Cost matrices
             Q = [1 0;
-                0 10];
+                0 50];
 
-            R = 30;
+            R = 0.01;
 
             % Constraints
             % u in U = { u | Mu <= m } (i.e. Pavg<=80%, -Pavg<=20%)
             M = [1;-1]; 
             m = [80-56.667; -50+56.667];
-            
+
             % x in X = { x | Fx <= f } --> no state constraints here
             F = [1 0;
                 -1 0;
@@ -128,7 +128,8 @@ classdef MpcControl_z < MpcControlBase
             % Rewrite constraints
             % u in U = { u | Mu <= m }
             M = [1;-1]; 
-            m = [80-56.667; -50+56.667];
+            % m = [80-56.667; -50+56.667];
+            m = [inf;inf];
             % x in X = { x | Fx <= f } --> no state constraints here
             F = [1 0;
                 -1 0;
@@ -181,6 +182,7 @@ classdef MpcControl_z < MpcControlBase
             C_bar = [C,Cd];
 
             L = -place(A_bar',C_bar',[0.2, 0.3, 0.4])';
+            % L = -place(A_bar',C_bar',[0.6, 0.7, 0.8])';
 
          
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
