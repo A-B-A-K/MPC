@@ -49,8 +49,8 @@ classdef MpcControl_z < MpcControlBase
             B = mpc.B;
 
             % Cost matrices
-            Q = [250 0;
-                0 250];
+            Q = [500 0;
+                0 500];
 
             R = 40;
 
