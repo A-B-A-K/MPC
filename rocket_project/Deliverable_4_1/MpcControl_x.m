@@ -44,7 +44,6 @@ classdef MpcControl_x < MpcControlBase
 
             R = 35;
 
-
             % Constraints
             % u in U = { u | Mu <= m }
             M = [1;-1]; 

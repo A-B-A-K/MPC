@@ -1,4 +1,5 @@
 addpath(fullfile('..', 'src'));
+addpath(genpath('C:\gurobi1100'));
 
 close all
 clear all

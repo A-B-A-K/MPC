@@ -39,7 +39,8 @@ classdef MpcControl_roll < MpcControlBase
             Q = [1 0;
                 0 20];
 
-            R = 0.1;
+            R = 1;
+            Q_slack = 10 * eye(4); 
 
             % Constraints
             % u in U = { u | Mu <= m } (i.e. Pdiff<=0.2, -Pdiff<=0.2)
@@ -51,6 +52,7 @@ classdef MpcControl_roll < MpcControlBase
                 0 1;
                 0 -1];
             f = [inf; inf; inf; inf];
+            slack = sdpvar(4, N-1);
             
             % Compute LQR controller for unconstrained system
             [K,Qf,~] = dlqr(A,B,Q,R);
@@ -63,8 +65,12 @@ classdef MpcControl_roll < MpcControlBase
             con = [];
             for i = 1:N-1
                 con = [con, X(:,i+1) == A*X(:,i) + B*U(:,i)];
-                con = [con, F*(X(:,i)-x_ref) <= f, M*(U(:,i)-u_ref) <= m];
+                % Soften state constraints with slack
+                con = [con, F*(X(:,i)-x_ref) <= f + slack(:,i)];
+                con = [con, M*(U(:,i)-u_ref) <= m];
                 obj = obj + (X(:,i)-x_ref)'*Q*(X(:,i)-x_ref) + (U(:,i)-u_ref)'*R*(U(:,i)-u_ref);
+                % Penalize slack variable use
+                obj = obj + slack(:,i)' * Q_slack * slack(:,i);
             end
             % con = con + (Ff*X(:,N) <= ff);
             obj = obj + (X(:,N)-x_ref)'*Qf*(X(:,N)-x_ref);

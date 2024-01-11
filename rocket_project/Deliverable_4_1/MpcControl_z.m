@@ -49,11 +49,11 @@ classdef MpcControl_z < MpcControlBase
             B = mpc.B;
 
             % Cost matrices
-            Q = [1 0;
-                0 50];
+            Q = [10 0;
+                0 200];
 
-            R = 0.01;
-
+            R = 0.1;
+          
             % Constraints
             % u in U = { u | Mu <= m } (i.e. Pavg<=80%, -Pavg<=20%)
             M = [1;-1]; 
