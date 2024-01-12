@@ -42,7 +42,7 @@ classdef MpcControl_y < MpcControlBase
                 0 0 0 150];
 
             R = 1;
-            Q_slack = 1 * eye(4); 
+            Q_slack = 10 * eye(4); 
 
 
             % Constraints
