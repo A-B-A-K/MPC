@@ -51,7 +51,7 @@ classdef MpcControl_z < MpcControlBase
             % Cost matrices
             Q = [250 0;
                 0 250];
-            
+
             R = 40;
 
 
@@ -59,6 +59,7 @@ classdef MpcControl_z < MpcControlBase
             % u in U = { u | Mu <= m } (i.e. Pavg<=80%, -Pavg<=20%)
             M = [1;-1]; 
             m = [80-56.667; -50+56.667];
+
             % x in X = { x | Fx <= f } --> no state constraints here
             F = [1 0;
                 -1 0;
